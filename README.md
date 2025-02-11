@@ -7,19 +7,14 @@ This repository contains the source code for the paper [Enhancing Single-View 3D
 
 ![Overview](pics/mainFigure.png)
 
-<!-- ## Cite this work
 
-```
-``` -->
 
 ## Datasets
 
-We use the [ShapeNet](https://www.shapenet.org/), [Pix3D](http://pix3d.csail.mit.edu/), and Things3D datasets in our experiments, which are available below:
+We use the [ShapeNet](https://www.shapenet.org/), [ShapeTalk](https://changeit3d.github.io/#dataset/), which ShapeNet is available below:
 
 - ShapeNet rendering images: http://cvgl.stanford.edu/data2/ShapeNetRendering.tgz
 - ShapeNet voxelized models: http://cvgl.stanford.edu/data2/ShapeNetVox32.tgz
-- Pix3D images & voxelized models: http://pix3d.csail.mit.edu/data/pix3d.zip
-- Things3D:[https://gateway.infinitescript.com/?fileName=Things3D](https://gateway.infinitescript.com/?fileName=Things3D)
 
 ## Pretrained Models
 <!-- 
@@ -84,6 +79,14 @@ python3 test.py --test --weights ./output/checkpoints/.../checkpoint-best.pth
 ```
 tensorboard --logdir=output/logs/2024-12-14T14:16:59.167735
 ```
+
+
+
+<!-- ## Cite this work
+
+```
+``` -->
+
 
 
 ## License
