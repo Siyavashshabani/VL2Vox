@@ -7,10 +7,10 @@ This repository contains the source code for the paper [Enhancing Single-View 3D
 
 ![Overview](pics/mainFigure.png)
 
-## Cite this work
+<!-- ## Cite this work
 
 ```
-```
+``` -->
 
 ## Datasets
 
@@ -22,24 +22,24 @@ We use the [ShapeNet](https://www.shapenet.org/), [Pix3D](http://pix3d.csail.mit
 - Things3D:[https://gateway.infinitescript.com/?fileName=Things3D](https://gateway.infinitescript.com/?fileName=Things3D)
 
 ## Pretrained Models
-
+<!-- 
 The pretrained models on ShapeNet are available as follows:
 
 - [Pix2Vox++/A](https://gateway.infinitescript.com/?fileName=Pix2Vox%2B%2B-A-ShapeNet.pth) (385.4 MB)
-- [Pix2Vox++/F](https://gateway.infinitescript.com/?fileName=Pix2Vox%2B%2B-F-ShapeNet.pth) (19.4 MB)
+- [Pix2Vox++/F](https://gateway.infinitescript.com/?fileName=Pix2Vox%2B%2B-F-ShapeNet.pth) (19.4 MB) -->
 
 ## Prerequisites
 
 #### Clone the Code Repository
 
 ```
-git clone https://github.com/Siyavashshabani/VLM2Vox.git
+git clone https://github.com/Siyavashshabani/VL2Vox.git
 ```
 
 #### Install Python Denpendencies
 
 ```
-cd VLM2Vox
+cd VL2Vox
 pip install -r requirements.txt
 ```
 
@@ -64,7 +64,7 @@ __C.DATASETS.THINGS3D.VOXEL_PATH            = '/path/to/Datasets/ShapeNet/ShapeN
 
 ## Get Started
 
-To train VLM2Vox, you can simply use the following command:
+To train VL2Vox, you can simply use the following command:
 
 ```
 python3 train.py  --weights=./pre_train/Pix2Vox++-A-ShapeNet.pth
@@ -78,11 +78,6 @@ python3 test.py --test --weights ./output/checkpoints/.../checkpoint-best.pth
 
 ```
 
-If you want to train/test Pix2Vox++/F, you need to checkout to `Pix2Vox++-F` branch first.
-
-```
-git checkout -b Pix2Vox++-F origin/Pix2Vox++-F
-```
 
 ## How to check the tensorboard during:
 
