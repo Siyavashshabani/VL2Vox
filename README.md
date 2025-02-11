@@ -2,8 +2,6 @@
 
 This repository contains the source code for the paper [Enhancing Single-View 3D Reconstruction with Semantic Insights from Large Language Models]. 
 
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/hzxie/Pix2Vox.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/hzxie/Pix2Vox/context:python)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/hzxie/Pix2Vox.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/hzxie/Pix2Vox/alerts/)
 
 ![Overview](pics/mainFigure.png)
 
