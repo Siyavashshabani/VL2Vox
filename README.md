@@ -1,4 +1,4 @@
-# Pix2Vox++
+# VL2Vox
 
 This repository contains the source code for the paper [Enhancing Single-View 3D Reconstruction with Semantic Insights from Large Language Models]. 
 
