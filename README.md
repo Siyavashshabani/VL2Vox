@@ -14,7 +14,7 @@ We use the [ShapeNet](https://www.shapenet.org/), [ShapeTalk](https://changeit3d
 - ShapeNet rendering images: http://cvgl.stanford.edu/data2/ShapeNetRendering.tgz
 - ShapeNet voxelized models: http://cvgl.stanford.edu/data2/ShapeNetVox32.tgz
 
-## Pretrained Models
+<!-- ## Pretrained Models -->
 <!-- 
 The pretrained models on ShapeNet are available as follows:
 
