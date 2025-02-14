@@ -13,7 +13,7 @@ from models.encoder import Encoder
 from models.decoder import Decoder, VoxelDecoderTr
 from models.refiner import Refiner
 from models.merger import Merger
-from pix2vox_utils.average_meter import AverageMeter
+from utils.average_meter import AverageMeter
 
 class ConvertLayer(nn.Module):
     def __init__(self, input_dim=(202, 768), output_dim=(1, 256, 7, 7), bottleneck_dim=512):

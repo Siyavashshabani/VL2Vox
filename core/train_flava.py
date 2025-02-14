@@ -9,9 +9,9 @@ import torch
 import torch.backends.cudnn
 import torch.utils.data
 
-import pix2vox_utils.data_loaders
-import pix2vox_utils.data_transforms
-import pix2vox_utils.helpers
+import utils.data_loaders
+import utils.data_transforms
+import utils.helpers
 
 from datetime import datetime as dt
 from tensorboardX import SummaryWriter
@@ -22,7 +22,7 @@ from core.test_flava import test_net_flava
 # from models.decoder import Decoder
 # from models.refiner import Refiner
 # from models.merger import Merger
-from pix2vox_utils.average_meter import AverageMeter
+from utils.average_meter import AverageMeter
 
 
 ############################################################################# add flava 

@@ -9,15 +9,15 @@ import torch
 import torch.backends.cudnn
 import torch.utils.data
 
-import pix2vox_utils.data_loaders
-import pix2vox_utils.data_transforms
-import pix2vox_utils.helpers
+import utils.data_loaders
+import utils.data_transforms
+import utils.helpers
 
 from models.encoder import Encoder
 from models.decoder import Decoder
 from models.refiner import Refiner
 from models.merger import Merger
-from pix2vox_utils.average_meter import AverageMeter
+from utils.average_meter import AverageMeter
 
 
 def test_net(cfg,

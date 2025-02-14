@@ -15,7 +15,7 @@ import torch.utils.data.dataset
 
 from enum import Enum, unique
 
-import pix2vox_utils.binvox_rw
+import utils.binvox_rw
 
 
 @unique
@@ -112,7 +112,7 @@ class ShapeNetDataset(torch.utils.data.dataset.Dataset):
             volume = volume['Volume'].astype(np.float32)
         elif suffix == '.binvox':
             with open(volume_path, 'rb') as f:
-                volume = pix2vox_utils.binvox_rw.read_as_3d_array(f)
+                volume = utils.binvox_rw.read_as_3d_array(f)
                 volume = volume.data.astype(np.float32)
 
         ### load the .txt file 

@@ -9,15 +9,15 @@ import torch
 import torch.backends.cudnn
 import torch.utils.data
 
-import pix2vox_utils.data_loaders
-import pix2vox_utils.data_transforms
-import pix2vox_utils.helpers
+import utils.data_loaders
+import utils.data_transforms
+import utils.helpers
 
 from models.encoder import Encoder
 from models.decoder import Decoder
 from models.refiner import Refiner
 from models.merger import Merger
-from pix2vox_utils.average_meter import AverageMeter
+from utils.average_meter import AverageMeter
 from transformers import AutoProcessor, FlavaModel
 import torch
 ###############################################################################################################
@@ -100,8 +100,8 @@ def test_flava_dino(cfg,vlm2pix, epoch_idx=-1, test_data_loader=None, test_write
 
         with torch.no_grad():
             # Get data from data loader
-            rendering_images = pix2vox_utils.helpers.var_or_cuda(rendering_images)
-            ground_truth_volume = pix2vox_utils.helpers.var_or_cuda(ground_truth_volume)
+            rendering_images = utils.helpers.var_or_cuda(rendering_images)
+            ground_truth_volume = utils.helpers.var_or_cuda(ground_truth_volume)
 
 
             vl_encoder_loss, dino_encoder_loss, refiner_loss, fusion_loss, generated_volume = vlm2pix(rendering_images,ground_truth_volume, taxomony_class )

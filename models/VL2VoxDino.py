@@ -7,7 +7,7 @@ from models.encoder import Encoder
 from models.decoder import Decoder, VoxelDecoderTr
 from models.refiner import Refiner
 from models.merger import Merger
-from pix2vox_utils.average_meter import AverageMeter
+from utils.average_meter import AverageMeter
 from models.fusion import Fusion, ConvFusion
 
 class ConvertLayer(nn.Module):

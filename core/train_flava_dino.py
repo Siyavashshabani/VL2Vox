@@ -5,9 +5,9 @@ import torch
 import torch.backends.cudnn
 import torch.utils.data
 
-import pix2vox_utils.data_loaders
-import pix2vox_utils.data_transforms
-import pix2vox_utils.helpers
+import utils.data_loaders
+import utils.data_transforms
+import utils.helpers
 
 from datetime import datetime as dt
 from tensorboardX import SummaryWriter
@@ -18,7 +18,7 @@ from core.test_flava_dino import test_flava_dino
 # from models.decoder import Decoder
 # from models.refiner import Refiner
 # from models.merger import Merger
-from pix2vox_utils.average_meter import AverageMeter
+from utils.average_meter import AverageMeter
 
 
 ############################################################################# add flava 
@@ -38,35 +38,35 @@ def train_flava_dino(cfg):
     # Set up data augmentation
     IMG_SIZE = cfg.CONST.IMG_H, cfg.CONST.IMG_W
     CROP_SIZE = cfg.CONST.CROP_IMG_H, cfg.CONST.CROP_IMG_W
-    train_transforms = pix2vox_utils.data_transforms.Compose([
-        pix2vox_utils.data_transforms.RandomCrop(IMG_SIZE, CROP_SIZE),
-        pix2vox_utils.data_transforms.RandomBackground(cfg.TRAIN.RANDOM_BG_COLOR_RANGE),
-        pix2vox_utils.data_transforms.ColorJitter(cfg.TRAIN.BRIGHTNESS, cfg.TRAIN.CONTRAST, cfg.TRAIN.SATURATION),
-        pix2vox_utils.data_transforms.RandomNoise(cfg.TRAIN.NOISE_STD),
-        pix2vox_utils.data_transforms.Normalize(mean=cfg.DATASET.MEAN, std=cfg.DATASET.STD),
-        pix2vox_utils.data_transforms.RandomFlip(),
-        pix2vox_utils.data_transforms.RandomPermuteRGB(),
-        pix2vox_utils.data_transforms.ToTensor(),
+    train_transforms = utils.data_transforms.Compose([
+        utils.data_transforms.RandomCrop(IMG_SIZE, CROP_SIZE),
+        utils.data_transforms.RandomBackground(cfg.TRAIN.RANDOM_BG_COLOR_RANGE),
+        utils.data_transforms.ColorJitter(cfg.TRAIN.BRIGHTNESS, cfg.TRAIN.CONTRAST, cfg.TRAIN.SATURATION),
+        utils.data_transforms.RandomNoise(cfg.TRAIN.NOISE_STD),
+        utils.data_transforms.Normalize(mean=cfg.DATASET.MEAN, std=cfg.DATASET.STD),
+        utils.data_transforms.RandomFlip(),
+        utils.data_transforms.RandomPermuteRGB(),
+        utils.data_transforms.ToTensor(),
     ])
-    val_transforms = pix2vox_utils.data_transforms.Compose([
-        pix2vox_utils.data_transforms.CenterCrop(IMG_SIZE, CROP_SIZE),
-        pix2vox_utils.data_transforms.RandomBackground(cfg.TEST.RANDOM_BG_COLOR_RANGE),
-        pix2vox_utils.data_transforms.Normalize(mean=cfg.DATASET.MEAN, std=cfg.DATASET.STD),
-        pix2vox_utils.data_transforms.ToTensor(),
+    val_transforms = utils.data_transforms.Compose([
+        utils.data_transforms.CenterCrop(IMG_SIZE, CROP_SIZE),
+        utils.data_transforms.RandomBackground(cfg.TEST.RANDOM_BG_COLOR_RANGE),
+        utils.data_transforms.Normalize(mean=cfg.DATASET.MEAN, std=cfg.DATASET.STD),
+        utils.data_transforms.ToTensor(),
     ])
 
     # Set up data loader
-    train_dataset_loader = pix2vox_utils.data_loaders.DATASET_LOADER_MAPPING[cfg.DATASET.TRAIN_DATASET](cfg)
-    val_dataset_loader = pix2vox_utils.data_loaders.DATASET_LOADER_MAPPING[cfg.DATASET.TEST_DATASET](cfg)
+    train_dataset_loader = utils.data_loaders.DATASET_LOADER_MAPPING[cfg.DATASET.TRAIN_DATASET](cfg)
+    val_dataset_loader = utils.data_loaders.DATASET_LOADER_MAPPING[cfg.DATASET.TEST_DATASET](cfg)
     train_data_loader = torch.utils.data.DataLoader(dataset=train_dataset_loader.get_dataset(
-    pix2vox_utils.data_loaders.DatasetType.TRAIN, cfg.CONST.N_VIEWS_RENDERING, train_transforms),
+    utils.data_loaders.DatasetType.TRAIN, cfg.CONST.N_VIEWS_RENDERING, train_transforms),
                                                     batch_size=cfg.CONST.BATCH_SIZE,
                                                     num_workers=cfg.CONST.NUM_WORKER,
                                                     pin_memory=True,
                                                     shuffle=True,
                                                     drop_last=True)
     val_data_loader = torch.utils.data.DataLoader(dataset=val_dataset_loader.get_dataset(
-        pix2vox_utils.data_loaders.DatasetType.VAL, cfg.CONST.N_VIEWS_RENDERING, val_transforms),
+        utils.data_loaders.DatasetType.VAL, cfg.CONST.N_VIEWS_RENDERING, val_transforms),
                                                   batch_size=1,
                                                   num_workers=cfg.CONST.NUM_WORKER,
                                                   pin_memory=True,
@@ -92,15 +92,15 @@ def train_flava_dino(cfg):
     else:
         raise Exception("Incorrect model name!")
     
-    logging.debug('Parameters in Encoder: %d.' % (pix2vox_utils.helpers.count_parameters(vlm2pix.encoder)))
-    logging.debug('Parameters in Decoder: %d.' % (pix2vox_utils.helpers.count_parameters(vlm2pix.decoder)))
-    logging.debug('Parameters in Refiner: %d.' % (pix2vox_utils.helpers.count_parameters(vlm2pix.refiner)))
-    logging.debug('Parameters in Merger: %d.' %  (pix2vox_utils.helpers.count_parameters(vlm2pix.merger)))
-    logging.debug('Parameters in convert_layer: %d.' % (pix2vox_utils.helpers.count_parameters(vlm2pix.convert_layer)))
+    logging.debug('Parameters in Encoder: %d.' % (utils.helpers.count_parameters(vlm2pix.encoder)))
+    logging.debug('Parameters in Decoder: %d.' % (utils.helpers.count_parameters(vlm2pix.decoder)))
+    logging.debug('Parameters in Refiner: %d.' % (utils.helpers.count_parameters(vlm2pix.refiner)))
+    logging.debug('Parameters in Merger: %d.' %  (utils.helpers.count_parameters(vlm2pix.merger)))
+    logging.debug('Parameters in convert_layer: %d.' % (utils.helpers.count_parameters(vlm2pix.convert_layer)))
 
-    logging.debug('Parameters in decoder_dino: %d.' % (pix2vox_utils.helpers.count_parameters(vlm2pix.decoder_dino)))
-    logging.debug('Parameters in fusion: %d.' % (pix2vox_utils.helpers.count_parameters(vlm2pix.fusion)))
-    logging.debug('Parameters in convert_dino: %d.' % (pix2vox_utils.helpers.count_parameters(vlm2pix.convert_dino)))
+    logging.debug('Parameters in decoder_dino: %d.' % (utils.helpers.count_parameters(vlm2pix.decoder_dino)))
+    logging.debug('Parameters in fusion: %d.' % (utils.helpers.count_parameters(vlm2pix.fusion)))
+    logging.debug('Parameters in convert_dino: %d.' % (utils.helpers.count_parameters(vlm2pix.convert_dino)))
 
     # # Initialize processor and model
     # flava_processor = AutoProcessor.from_pretrained("facebook/flava-full")
@@ -193,8 +193,6 @@ def train_flava_dino(cfg):
                         ground_truth_volumes) in enumerate(train_data_loader):
             # Measure data time
             data_time.update(time() - batch_end_time)
-
-            # print("pass data to model--------------------------------------------------------------")
             vl_encoder_loss, dino_encoder_loss, refiner_loss, fusion_loss, generated_volumes = vlm2pix(rendering_images.cuda(),ground_truth_volumes.cuda(), taxomony_class )
 
 
@@ -238,15 +236,7 @@ def train_flava_dino(cfg):
                 (epoch_idx + 1, cfg.TRAIN.NUM_EPOCHS, batch_idx + 1, n_batches, batch_time.val, data_time.val, 
                 vl_encoder_loss.item(), refiner_loss.item(), dino_encoder_loss.item(), fusion_loss.item()) # fusion_loss.item()
              )
-
-            # print("Encoder requires_grad:", any(p.requires_grad for p in vlm2pix.encoder.parameters()))
-            # print("Decoder requires_grad:", any(p.requires_grad for p in vlm2pix.decoder.parameters()))
-            # print("Refiner requires_grad:", any(p.requires_grad for p in vlm2pix.refiner.parameters()))
-            # print("Merger requires_grad:", any(p.requires_grad for p in vlm2pix.merger.parameters()))
-            # print("Convert_layer requires_grad:", any(p.requires_grad for p in vlm2pix.convert_layer.parameters()))
-            # print("FLAVA requires_grad:", any(p.requires_grad for p in vlm2pix.flava_model.parameters()))
-            # break
-            
+           
         # # Adjust learning rate
         convert_layer_lr_scheduler.step()
         decoder_lr_scheduler.step()
@@ -295,11 +285,6 @@ def train_flava_dino(cfg):
                 'best_epoch': best_epoch,
                 'vlm2pix_state_dict': vlm2pix.state_dict(),
             }
-            # if cfg.NETWORK.USE_REFINER:
-            #     checkpoint['refiner_state_dict'] = refiner.state_dict()
-            # if cfg.NETWORK.USE_MERGER:
-            #     checkpoint['merger_state_dict'] = merger.state_dict()
-
             torch.save(checkpoint, output_path)
             logging.info('Saved checkpoint to %s ...' % output_path)
 

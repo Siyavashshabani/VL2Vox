@@ -13,9 +13,9 @@ from core.train import train_net, train_net_flava
 from core.test_flava import test_net_flava, test_tsne
 import torch
 from models.VL2Vox import VL2Pix
-import pix2vox_utils.data_loaders
-import pix2vox_utils.data_transforms
-import pix2vox_utils.helpers
+import utils.data_loaders
+import utils.data_transforms
+import utils.helpers
 
 def get_args_from_command_line():
     parser = ArgumentParser(description='Parser of Runner of Pix2Vox')
@@ -60,20 +60,20 @@ def main():
 
     IMG_SIZE = cfg.CONST.IMG_H, cfg.CONST.IMG_W
     CROP_SIZE = cfg.CONST.CROP_IMG_H, cfg.CONST.CROP_IMG_W
-    train_transforms = pix2vox_utils.data_transforms.Compose([
-        pix2vox_utils.data_transforms.RandomCrop(IMG_SIZE, CROP_SIZE),
-        pix2vox_utils.data_transforms.RandomBackground(cfg.TRAIN.RANDOM_BG_COLOR_RANGE),
-        pix2vox_utils.data_transforms.ColorJitter(cfg.TRAIN.BRIGHTNESS, cfg.TRAIN.CONTRAST, cfg.TRAIN.SATURATION),
-        pix2vox_utils.data_transforms.RandomNoise(cfg.TRAIN.NOISE_STD),
-        pix2vox_utils.data_transforms.Normalize(mean=cfg.DATASET.MEAN, std=cfg.DATASET.STD),
-        pix2vox_utils.data_transforms.RandomFlip(),
-        pix2vox_utils.data_transforms.RandomPermuteRGB(),
-        pix2vox_utils.data_transforms.ToTensor(),
+    train_transforms = utils.data_transforms.Compose([
+        utils.data_transforms.RandomCrop(IMG_SIZE, CROP_SIZE),
+        utils.data_transforms.RandomBackground(cfg.TRAIN.RANDOM_BG_COLOR_RANGE),
+        utils.data_transforms.ColorJitter(cfg.TRAIN.BRIGHTNESS, cfg.TRAIN.CONTRAST, cfg.TRAIN.SATURATION),
+        utils.data_transforms.RandomNoise(cfg.TRAIN.NOISE_STD),
+        utils.data_transforms.Normalize(mean=cfg.DATASET.MEAN, std=cfg.DATASET.STD),
+        utils.data_transforms.RandomFlip(),
+        utils.data_transforms.RandomPermuteRGB(),
+        utils.data_transforms.ToTensor(),
     ])
-    train_dataset_loader = pix2vox_utils.data_loaders.DATASET_LOADER_MAPPING[cfg.DATASET.TRAIN_DATASET](cfg)
-    val_dataset_loader = pix2vox_utils.data_loaders.DATASET_LOADER_MAPPING[cfg.DATASET.TEST_DATASET](cfg)
+    train_dataset_loader = utils.data_loaders.DATASET_LOADER_MAPPING[cfg.DATASET.TRAIN_DATASET](cfg)
+    val_dataset_loader = utils.data_loaders.DATASET_LOADER_MAPPING[cfg.DATASET.TEST_DATASET](cfg)
     train_data_loader = torch.utils.data.DataLoader(dataset=train_dataset_loader.get_dataset(
-    pix2vox_utils.data_loaders.DatasetType.TRAIN, cfg.CONST.N_VIEWS_RENDERING, train_transforms),
+    utils.data_loaders.DatasetType.TRAIN, cfg.CONST.N_VIEWS_RENDERING, train_transforms),
                                                     batch_size=cfg.CONST.BATCH_SIZE,
                                                     num_workers=cfg.CONST.NUM_WORKER,
                                                     pin_memory=True,

@@ -5,15 +5,15 @@ import torch
 import torch.backends.cudnn
 import torch.utils.data
 
-import pix2vox_utils.data_loaders
-import pix2vox_utils.data_transforms
-import pix2vox_utils.helpers
+import utils.data_loaders
+import utils.data_transforms
+import utils.helpers
 
 from models.encoder import Encoder
 from models.decoder import Decoder
 from models.refiner import Refiner
 from models.merger import Merger
-from pix2vox_utils.average_meter import AverageMeter
+from utils.average_meter import AverageMeter
 from transformers import AutoProcessor, FlavaModel
 import torch
 from sklearn.manifold import TSNE
@@ -113,16 +113,16 @@ def test_net_flava(cfg,vlm2pix, epoch_idx=-1, test_data_loader=None, test_writer
         # Set up data augmentation
         IMG_SIZE = cfg.CONST.IMG_H, cfg.CONST.IMG_W
         CROP_SIZE = cfg.CONST.CROP_IMG_H, cfg.CONST.CROP_IMG_W
-        test_transforms = pix2vox_utils.data_transforms.Compose([
-            pix2vox_utils.data_transforms.CenterCrop(IMG_SIZE, CROP_SIZE),
-            pix2vox_utils.data_transforms.RandomBackground(cfg.TEST.RANDOM_BG_COLOR_RANGE),
-            pix2vox_utils.data_transforms.Normalize(mean=cfg.DATASET.MEAN, std=cfg.DATASET.STD),
-            pix2vox_utils.data_transforms.ToTensor(),
+        test_transforms = utils.data_transforms.Compose([
+            utils.data_transforms.CenterCrop(IMG_SIZE, CROP_SIZE),
+            utils.data_transforms.RandomBackground(cfg.TEST.RANDOM_BG_COLOR_RANGE),
+            utils.data_transforms.Normalize(mean=cfg.DATASET.MEAN, std=cfg.DATASET.STD),
+            utils.data_transforms.ToTensor(),
         ])
 
-        dataset_loader = pix2vox_utils.data_loaders.DATASET_LOADER_MAPPING[cfg.DATASET.TEST_DATASET](cfg)
+        dataset_loader = utils.data_loaders.DATASET_LOADER_MAPPING[cfg.DATASET.TEST_DATASET](cfg)
         test_data_loader = torch.utils.data.DataLoader(dataset=dataset_loader.get_dataset(
-            pix2vox_utils.data_loaders.DatasetType.TEST, cfg.CONST.N_VIEWS_RENDERING, test_transforms),
+            utils.data_loaders.DatasetType.TEST, cfg.CONST.N_VIEWS_RENDERING, test_transforms),
                                                        batch_size=1,
                                                        num_workers=cfg.CONST.NUM_WORKER,
                                                        pin_memory=True,
@@ -147,8 +147,8 @@ def test_net_flava(cfg,vlm2pix, epoch_idx=-1, test_data_loader=None, test_writer
 
         with torch.no_grad():
             # Get data from data loader
-            rendering_images = pix2vox_utils.helpers.var_or_cuda(rendering_images)
-            ground_truth_volume = pix2vox_utils.helpers.var_or_cuda(ground_truth_volume)
+            rendering_images = utils.helpers.var_or_cuda(rendering_images)
+            ground_truth_volume = utils.helpers.var_or_cuda(ground_truth_volume)
 
 
             encoder_loss, refiner_loss, generated_volume = vlm2pix(rendering_images,ground_truth_volume, taxomony_class )
@@ -194,11 +194,11 @@ def test_net_flava(cfg,vlm2pix, epoch_idx=-1, test_data_loader=None, test_writer
             # Append generated volumes to TensorBoard
             if test_writer and sample_idx < 3:
                 # Volume Visualization
-                rendering_views = pix2vox_utils.helpers.get_volume_views(generated_volume.cpu().numpy())
+                rendering_views = utils.helpers.get_volume_views(generated_volume.cpu().numpy())
                 rendering_views = rendering_views.transpose(2, 0, 1)  # Convert from (H, W, C) to (C, H, W)
 
                 test_writer.add_image('Model%02d/Reconstructed' % sample_idx, rendering_views, epoch_idx)
-                rendering_views = pix2vox_utils.helpers.get_volume_views(ground_truth_volume.cpu().numpy())
+                rendering_views = utils.helpers.get_volume_views(ground_truth_volume.cpu().numpy())
                 rendering_views = rendering_views.transpose(2, 0, 1) 
                 test_writer.add_image('Model%02d/GroundTruth' % sample_idx, rendering_views, epoch_idx)
 
@@ -272,16 +272,16 @@ def test_tsne(cfg,vlm2pix, epoch_idx=-1, test_data_loader=None, test_writer=None
         # Set up data augmentation
         IMG_SIZE = cfg.CONST.IMG_H, cfg.CONST.IMG_W
         CROP_SIZE = cfg.CONST.CROP_IMG_H, cfg.CONST.CROP_IMG_W
-        test_transforms = pix2vox_utils.data_transforms.Compose([
-            pix2vox_utils.data_transforms.CenterCrop(IMG_SIZE, CROP_SIZE),
-            pix2vox_utils.data_transforms.RandomBackground(cfg.TEST.RANDOM_BG_COLOR_RANGE),
-            pix2vox_utils.data_transforms.Normalize(mean=cfg.DATASET.MEAN, std=cfg.DATASET.STD),
-            pix2vox_utils.data_transforms.ToTensor(),
+        test_transforms = utils.data_transforms.Compose([
+            utils.data_transforms.CenterCrop(IMG_SIZE, CROP_SIZE),
+            utils.data_transforms.RandomBackground(cfg.TEST.RANDOM_BG_COLOR_RANGE),
+            utils.data_transforms.Normalize(mean=cfg.DATASET.MEAN, std=cfg.DATASET.STD),
+            utils.data_transforms.ToTensor(),
         ])
 
-        dataset_loader = pix2vox_utils.data_loaders.DATASET_LOADER_MAPPING[cfg.DATASET.TEST_DATASET](cfg)
+        dataset_loader = utils.data_loaders.DATASET_LOADER_MAPPING[cfg.DATASET.TEST_DATASET](cfg)
         test_data_loader = torch.utils.data.DataLoader(dataset=dataset_loader.get_dataset(
-            pix2vox_utils.data_loaders.DatasetType.TEST, cfg.CONST.N_VIEWS_RENDERING, test_transforms),
+            utils.data_loaders.DatasetType.TEST, cfg.CONST.N_VIEWS_RENDERING, test_transforms),
                                                        batch_size=1,
                                                        num_workers=cfg.CONST.NUM_WORKER,
                                                        pin_memory=True,
@@ -310,8 +310,8 @@ def test_tsne(cfg,vlm2pix, epoch_idx=-1, test_data_loader=None, test_writer=None
 
         with torch.no_grad():
             # Get data from data loader
-            rendering_images = pix2vox_utils.helpers.var_or_cuda(rendering_images)
-            ground_truth_volume = pix2vox_utils.helpers.var_or_cuda(ground_truth_volume)
+            rendering_images = utils.helpers.var_or_cuda(rendering_images)
+            ground_truth_volume = utils.helpers.var_or_cuda(ground_truth_volume)
 
             encoder_loss, refiner_loss, generated_volume  = vlm2pix(rendering_images,ground_truth_volume, taxomony_class )
             # print("output.shape---------------------------:",generated_volume.shape)
