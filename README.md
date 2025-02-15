@@ -5,8 +5,6 @@ This repository contains the source code for the paper [Enhancing Single-View 3D
 
 ![Overview](pics/mainFigure.png)
 
-
-
 ## Datasets
 
 We use the [ShapeNet](https://www.shapenet.org/), [ShapeTalk](https://changeit3d.github.io/#dataset/), which ShapeNet is available below:
@@ -14,12 +12,6 @@ We use the [ShapeNet](https://www.shapenet.org/), [ShapeTalk](https://changeit3d
 - ShapeNet rendering images: http://cvgl.stanford.edu/data2/ShapeNetRendering.tgz
 - ShapeNet voxelized models: http://cvgl.stanford.edu/data2/ShapeNetVox32.tgz
 
-<!-- ## Pretrained Models -->
-<!-- 
-The pretrained models on ShapeNet are available as follows:
-
-- [Pix2Vox++/A](https://gateway.infinitescript.com/?fileName=Pix2Vox%2B%2B-A-ShapeNet.pth) (385.4 MB)
-- [Pix2Vox++/F](https://gateway.infinitescript.com/?fileName=Pix2Vox%2B%2B-F-ShapeNet.pth) (19.4 MB) -->
 
 ## Prerequisites
 
