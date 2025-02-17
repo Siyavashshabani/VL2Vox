@@ -1,14 +1,8 @@
-#!/usr/bin/python3
-# -*- coding: utf-8 -*-
-#
-# Developed by Haozhe Xie <cshzxie@gmail.com>
-
 import logging
 import matplotlib
 import numpy as np
 import os
 import sys
-# Fix problem: no $DISPLAY environment variable
 matplotlib.use('Agg')
 
 from argparse import ArgumentParser
@@ -61,8 +55,7 @@ def main():
         if not args.test:
             cfg.TRAIN.RESUME_TRAIN = True
 
-    # Print config
-    # print('Use config:')
+
     pprint(cfg)
 
     # Set GPU to use
@@ -73,21 +66,12 @@ def main():
     ## stat training 
     if cfg.Train_decoder:
         if cfg.CONST.MODEL=="VLM2pix":
-            print("finetune----------------------------------------------------------------------------------")
             train_net_flava_finetune(cfg) #train_net
         elif cfg.CONST.MODEL=="VL2pixDino":
             train_flava_dino(cfg)
         else:
             raise Exception("Incorrect model name!")
         
-    # else:
-    #     train_net_flava(cfg) #train_net
-  
-    #     if 'WEIGHTS' in cfg.CONST and os.path.exists(cfg.CONST.WEIGHTS):
-    #         test_net(cfg)
-    #     else:
-    #         logging.error('Please specify the file path of checkpoint.')
-    #         sys.exit(2)
 
 
 if __name__ == '__main__':
