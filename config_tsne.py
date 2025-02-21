@@ -59,13 +59,8 @@ __C.DATASET.MEAN                            = [0.5, 0.5, 0.5]
 __C.DATASET.STD                             = [0.5, 0.5, 0.5]
 __C.DATASET.TRAIN_DATASET                   = 'ShapeNet' ##ShapeTalk
 __C.DATASET.TEST_DATASET                    = 'ShapeNet' ##ShapeTalk
-# __C.DATASET.TEST_DATASET                  = 'Pascal3D'
-# __C.DATASET.TEST_DATASET                  = 'Pix3D'
-# __C.DATASET.TEST_DATASET                  = 'Things3D'
 
-#
-# Common
-#
+
 __C.CONST                                   = edict()
 # __C.CONST.DEVICE                            = '0,1,2,3'
 __C.CONST.DEVICE                            = '7'
