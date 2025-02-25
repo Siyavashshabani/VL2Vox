@@ -30,35 +30,18 @@ class ConvertLayer(nn.Module):
     def forward(self, x):
         # Flatten input
         x = x.view(x.size(0), -1)
-        # print("after view-----------------", x.shape)
+        
         # Apply bottleneck
         x = self.bottleneck(x)
-        # print("after btn-----------------", x.shape)
+        
         # Map to final size
         x = self.fc(x)
-        # print("after fc-----------------", x.shape)
-       
+        
         # Reshape to [B, 1, 256, 7, 7]
         x = x.view(x.size(0), 1, 256, 7, 7)
         return x
 
-# class ConvertLayer(nn.Module):
-#     def __init__(self):
-#         super(ConvertLayer, self).__init__()
-#         self.conv1 = nn.Conv2d(in_channels=1, out_channels=64, kernel_size=3, stride=1, padding=1)
-#         self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)  # Halve the dimensions
 
-#         self.conv2 = nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, stride=1, padding=1)
-#         self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
-
-#         self.conv3 = nn.Conv2d(in_channels=128, out_channels=256, kernel_size=3, stride=1, padding=1)
-#         self.pool3 = nn.AdaptiveMaxPool2d((7, 7))  # Ensure final size is 7x7
-
-#     def forward(self, x):
-#         x = self.pool1(self.conv1(x))
-#         x = self.pool2(self.conv2(x))
-#         x = self.pool3(self.conv3(x))
-#         return x.unsqueeze(1)
 def load_state_dict_with_prefix(state_dict, submodule, prefix):
     filtered_state_dict = {f"module.{key[len(prefix):]}": value 
                            for key, value in state_dict.items() 
@@ -80,7 +63,6 @@ class VL2Pix(nn.Module):
         self.cfg = cfg
         self.bce_loss = bce_loss
         self.loss_CEDice = CEDiceLoss()
-        # Initialize and load pretrained encoder
         self.encoder = torch.nn.DataParallel(Encoder(cfg) ).cuda()
 
         ## Define the decoder
@@ -101,7 +83,6 @@ class VL2Pix(nn.Module):
         
         if cfg.CONST.STATE=="Train":
             checkpoint = torch.load(cfg.CONST.WEIGHTS)
-            # self.encoder = torch.nn.DataParallel(self.encoder)
             ################################################################################## Converter
             for param in self.convert_layer.parameters():
                 param.requires_grad = True  
@@ -129,13 +110,10 @@ class VL2Pix(nn.Module):
 
         elif cfg.CONST.STATE=="Train_resume":
             checkpoint = torch.load(cfg.CONST.WEIGHTS)
-            # self.encoder = torch.nn.DataParallel(self.encoder)
             vlm2pix_state_dict = checkpoint["vlm2pix_state_dict"]    
-            # for key in vlm2pix_state_dict.keys():
-            #     print(key)     
+    
 
             ################################################################################## Decoder   
-            # self.decoder.load_state_dict(vlm2pix_state_dict["decoder"])
             load_state_dict_with_prefix(vlm2pix_state_dict, self.decoder, "decoder.module.")
             for param in self.decoder.parameters():
                 param.requires_grad = True  
@@ -187,13 +165,10 @@ class VL2Pix(nn.Module):
         if self.cfg.NETWORK.DECODER == "Conv":
             flava_embeddings = self.ensure_fixed_shape(flava_outputs.multimodal_embeddings, target_length=202)    
             flava_embeddings = flava_embeddings.unsqueeze(1) 
-            # print("flava_embeddings shape-----------------------------------------", flava_embeddings.shape)
 
             flava_embeddings = self.convert_layer(flava_embeddings)
-            # print("convert_layer shape-----------------------------------------", flava_embeddings.shape)
 
             raw_features, generated_volumes = self.decoder(flava_embeddings) # image_features + 
-            # print("generated_volumes shape---------------------------", generated_volumes.shape)
 
         elif self.cfg.NETWORK.DECODER == "Tr":
             flava_embeddings = self.ensure_fixed_shape(flava_outputs.multimodal_embeddings, target_length=210)
@@ -207,9 +182,8 @@ class VL2Pix(nn.Module):
             if self.cfg.NETWORK.DECODER == "Conv":
                 generated_volumes = torch.mean(generated_volumes, dim=1)
                 encoder_loss = self.bce_loss(generated_volumes, ground_truth_volumes) * 10
+                
             elif self.cfg.NETWORK.DECODER == "Tr":
-                # print("generated_volumes shape---------------------------", generated_volumes.shape)
-                # print("ground_truth_volumes shape------------------------", ground_truth_volumes.shape)
                 encoder_loss = self.loss_CEDice(generated_volumes.squeeze(1),ground_truth_volumes )
                     
         if self.cfg.NETWORK.USE_REFINER:
@@ -241,7 +215,6 @@ class VL2Pix(nn.Module):
         elif seq_length > target_length:
             # Truncate the tensor
             tensor = tensor[:, :target_length, :]
-        # print("tensor-------------------------------------", tensor.shape)
         return tensor
 
 
