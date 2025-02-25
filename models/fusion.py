@@ -6,7 +6,6 @@ class Fusion(nn.Module):
     def __init__(self, cfg):
         super(Fusion, self).__init__()
         self.cfg = cfg
-
         # Layer Definition
         self.layer1 = nn.Sequential(
             nn.Conv3d(9, 9, kernel_size=3, padding=1),
@@ -40,14 +39,11 @@ class Fusion(nn.Module):
         )
 
     def forward(self, volume_vl, raw_vl, volume_dino, raw_dino ):
-        # volume_weights = []
         raw_dino = raw_dino.squeeze(1)
         volume_vl = volume_vl.squeeze(1)
         volume_dino = volume_dino.squeeze(1)
         raw_dino = raw_dino.squeeze(1)
-        
-        # print("raw_dino shape", raw_dino.shape)
-        volume_weight1 = self.layer1(raw_dino)
+                volume_weight1 = self.layer1(raw_dino)
         volume_weight2 = self.layer2(volume_weight1)
         volume_weight3 = self.layer3(volume_weight2)
         volume_weight4 = self.layer4(volume_weight3)
@@ -55,11 +51,8 @@ class Fusion(nn.Module):
             volume_weight1, volume_weight2, volume_weight3, volume_weight4
         ], dim=1))
         volume_weight = self.layer6(volume_weight)
-
-        # print("Before the softmax", volume_weight.shape)
         volume_weight = F.softmax(volume_weight, dim=1)
         volume_vl = volume_vl * volume_weight
-        # print("volume_vl--------------", volume_vl.shape)
         volume_vl = torch.sum(volume_vl, dim=1)
         
         volume_vl = volume_vl*volume_dino
@@ -97,11 +90,6 @@ class ConvFusion(nn.Module):
 
 
     def forward(self, volume_vl, volume_dino ):
-
-        # volume_vl = volume_vl.squeeze(1)
-        # volume_dino = volume_dino.squeeze(1)
-        # print("volume_dino ----------------------:", volume_dino.shape)
-        # print("volume_vl ------------------------:", volume_dino.shape)
         volume_dino_weight = self.layer_dino_1(volume_dino)
         volume_dino_weight = self.layer_dino_2(volume_dino_weight)
         

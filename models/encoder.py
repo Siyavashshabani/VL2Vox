@@ -39,22 +39,16 @@ class Encoder(torch.nn.Module):
         )
 
     def forward(self, rendering_images):
-        # print(rendering_images.size())  # torch.Size([batch_size, n_views, img_c, img_h, img_w])
         rendering_images = rendering_images.permute(1, 0, 2, 3, 4).contiguous()
         rendering_images = torch.split(rendering_images, 1, dim=0)
         image_features = []
 
         for img in rendering_images:
             features = self.resnet(img.squeeze(dim=0))
-            # print(features.size())    # torch.Size([batch_size, 512, 28, 28])
             features = self.layer1(features)
-            # print(features.size())    # torch.Size([batch_size, 512, 28, 28])
             features = self.layer2(features)
-            # print(features.size())    # torch.Size([batch_size, 256, 14, 14])
             features = self.layer3(features)
-            # print(features.size())    # torch.Size([batch_size, 256, 7, 7])
             image_features.append(features)
 
         image_features = torch.stack(image_features).permute(1, 0, 2, 3, 4).contiguous()
-        # print(image_features.size())  # torch.Size([batch_size, n_views, 256, 7, 7])
         return image_features
